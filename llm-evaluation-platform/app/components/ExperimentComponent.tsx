@@ -1,3 +1,4 @@
+'use client';
 enum ExperimentStatus {
     Pending = "cool",
     Running = "running",
@@ -15,4 +16,8 @@ let start: Experiment = {
     name: "Test Experiment",
     prompt: "What is the weather today?",
     status: ExperimentStatus.Pending
+}
+
+export default function ExperimentComp() {
+    
 }
