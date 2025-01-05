@@ -1,84 +1,84 @@
-import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { BarChart, Activity, MessageSquare } from 'lucide-react';
+import React, { useState } from 'react';
+import InputSection from '@/components/input-section/InputSection';
+import ResponseSection from '@/components/response-section/ResponseSection';
+import type { ModelResponse } from '@/types/responses'; // We'll create this type file next
 
-const ComparisonLayout = () => {
+export default function Home() {
+  const [responses, setResponses] = useState<ModelResponse[]>([]);
+
+  const handleComparison = async (data: { prompt: string; models: string[] }) => {
+    // Set initial loading state for each model
+    setResponses(data.models.map(model => ({
+      model,
+      response: '',
+      timeTaken: 0,
+      status: 'loading' as const,
+    })));
+
+    // Process each model sequentially
+    for (const model of data.models) {
+      const startTime = Date.now();
+      
+      try {
+        // TODO: Replace with actual API call
+        const response = await mockApiCall(data.prompt, model);
+        
+        setResponses(prev => 
+          prev.map(r => 
+            r.model === model
+              ? {
+                  model,
+                  response,
+                  timeTaken: Date.now() - startTime,
+                  status: 'complete' as const,
+                }
+              : r
+          )
+        );
+      } catch (error) {
+        setResponses(prev => 
+          prev.map(r => 
+            r.model === model
+              ? {
+                  model,
+                  response: '',
+                  timeTaken: Date.now() - startTime,
+                  status: 'error' as const,
+                  error: error instanceof Error ? error.message : 'An error occurred',
+                }
+              : r
+          )
+        );
+      }
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">LLM Response Comparison</h1>
-          <p className="text-gray-600 mt-2">Compare responses from different language models for educational analysis</p>
-        </header>
+    <main className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">
+          LLM Model Comparison
+        </h1>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Input Section - 4 columns on large screens */}
+          <div className="lg:col-span-4">
+            <InputSection onSubmit={handleComparison} />
+          </div>
 
-        {/* Main Grid Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Input Column */}
-          <Card className="col-span-1">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <MessageSquare className="w-5 h-5 text-blue-500" />
-                <h2 className="text-xl font-semibold">Prompt Input</h2>
-              </div>
-              <div className="space-y-4">
-                <Input 
-                  placeholder="Enter your prompt here..."
-                  className="w-full h-32 resize-none"
-                />
-                <Button className="w-full">
-                  Compare Responses
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Responses Column */}
-          <Card className="col-span-1">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Activity className="w-5 h-5 text-green-500" />
-                <h2 className="text-xl font-semibold">Model Responses</h2>
-              </div>
-              <div className="space-y-4">
-                {['llama-3.3-70b', 'mixtral-8x7b', 'gemma2-9b'].map((model) => (
-                  <Card key={model} className="p-4 bg-gray-50">
-                    <h3 className="font-medium text-gray-900 mb-2">{model}</h3>
-                    <p className="text-gray-600">Response will appear here...</p>
-                  </Card>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Metrics Column */}
-          <Card className="col-span-1">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <BarChart className="w-5 h-5 text-purple-500" />
-                <h2 className="text-xl font-semibold">Metrics</h2>
-              </div>
-              <div className="space-y-4">
-                {['Clarity', 'Accuracy', 'Depth', 'Engagement', 'Helpfulness'].map((metric) => (
-                  <div key={metric} className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-sm font-medium text-gray-700">{metric}</span>
-                      <span className="text-sm text-gray-500">0/100</span>
-                    </div>
-                    <div className="h-2 bg-gray-200 rounded-full">
-                      <div className="h-2 bg-purple-500 rounded-full w-0"></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          {/* Response Section - 8 columns on large screens */}
+          <div className="lg:col-span-8">
+            <ResponseSection responses={responses} />
+          </div>
         </div>
       </div>
-    </div>
+    </main>
   );
-};
+}
 
-export default ComparisonLayout;
+// Temporary mock API call - will be replaced with actual API integration
+const mockApiCall = async (prompt: string, model: string): Promise<string> => {
+  await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+  if (Math.random() < 0.1) throw new Error('Model API error');
+  return `Response from ${model} for prompt: "${prompt}"\n\nThis is a mock response that will be replaced with actual API integration.`;
+};
