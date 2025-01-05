@@ -168,7 +168,7 @@ llm-comparison/
 
 ## Notes for LLM Agents
 - Always check this master doc first
-- Document all changes in skibidi3.md
+- Document all changes in skibidi.md depend on user preferences
 - Update implementation status after changes
 - Track new dependencies
 - Note any environment changes
