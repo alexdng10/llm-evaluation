@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Represents a prompt sent to the LLMs
+model Prompt {
+  id        String     @id @default(uuid())
+  text      String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  responses Response[]
+}
+
+// Represents a response from an LLM
+model Response {
+  id          String   @id @default(uuid())
+  modelName   String   // e.g., "llama-3.3-70b-versatile"
+  text        String   // The actual response content
+  promptId    String
+  prompt      Prompt   @relation(fields: [promptId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  metrics     Metrics  @relation(fields: [metricsId], references: [id])
+  metricsId   String   @unique // One-to-one relation with Metrics
+}
+
+// Stores key metrics focused on student learning experience
+model Metrics {
+  id              String    @id @default(uuid())
+  response        Response?
+
+  // Core Learning Metrics (0-100 scale)
+  clarity         Float     // How clear and easy to understand
+  accuracy        Float     // Factual correctness
+  depth           Float     // Depth of explanation
+  engagement      Float     // How well it keeps student engaged
+  helpfulness     Float     // Practical usefulness for learning
+  
+  // Performance
+  responseTimeMs  Int       // Response time in milliseconds
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([responseTimeMs])
+}
+
+// Tracks comparison sessions
+model ComparisonSession {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Store which models were compared
+  modelNames String[] // Array of model names used in comparison
+  
+  // Store the prompt ID used for this comparison
+  promptId  String
+  
+  // Additional metadata
+  userNotes String?   // Optional notes about the comparison
+}
