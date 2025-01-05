@@ -1,3 +1,6 @@
+// ResponseSection.tsx updates
+'use client';
+
 import React from 'react';
 
 interface ModelResponse {
@@ -21,8 +24,8 @@ const ResponseSection: React.FC<ResponseSectionProps> = ({ responses }) => {
           className="bg-white rounded-lg shadow-lg p-6 flex flex-col"
         >
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold text-gray-800">{response.model}</h3>
-            <span className="text-sm text-gray-500">
+            <h3 className="text-lg font-semibold text-black">{response.model}</h3>
+            <span className="text-sm text-black">
               {response.status === 'complete' && `${response.timeTaken}ms`}
             </span>
           </div>
@@ -54,7 +57,7 @@ const ResponseSection: React.FC<ResponseSectionProps> = ({ responses }) => {
 
           {response.status === 'complete' && (
             <div className="prose prose-sm max-w-none">
-              <div className="whitespace-pre-wrap">{response.response}</div>
+              <div className="whitespace-pre-wrap text-black">{response.response}</div>
             </div>
           )}
           
@@ -62,7 +65,7 @@ const ResponseSection: React.FC<ResponseSectionProps> = ({ responses }) => {
             <div className="mt-4 flex justify-end space-x-2">
               <button
                 type="button"
-                className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
+                className="px-3 py-1 text-sm text-black hover:text-gray-800"
                 onClick={() => navigator.clipboard.writeText(response.response)}
               >
                 Copy

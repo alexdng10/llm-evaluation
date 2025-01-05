@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 
 interface InputSectionProps {
@@ -40,24 +42,24 @@ const InputSection: React.FC<InputSectionProps> = ({ onSubmit }) => {
   return (
     <div className="w-full max-w-xl bg-white rounded-lg shadow-lg p-6">
       <div className="mb-6">
-        <h2 className="text-xl font-semibold mb-4">Model Comparison Input</h2>
+        <h2 className="text-xl font-semibold text-black">Model Comparison Input</h2>
       </div>
       
       <div className="space-y-6">
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-black">
             Enter your prompt:
           </label>
           <textarea
             placeholder="Type your prompt here..."
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            className="w-full min-h-32 p-3 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full min-h-32 p-3 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black placeholder-gray-500"
           />
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-black">
             Select models to compare:
           </label>
           <div className="flex flex-wrap gap-2">
@@ -68,7 +70,7 @@ const InputSection: React.FC<InputSectionProps> = ({ onSubmit }) => {
                 className={`px-4 py-2 rounded-md text-sm transition-colors
                   ${selectedModels.includes(model)
                     ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-100 text-black hover:bg-gray-200'
                   }`}
                 type="button"
               >

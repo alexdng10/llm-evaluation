@@ -1,7 +1,9 @@
+'use client';
+
 import React, { useState } from 'react';
-import InputSection from '@/components/input-section/InputSection';
-import ResponseSection from '@/components/response-section/ResponseSection';
-import type { ModelResponse } from '@/types/responses'; // We'll create this type file next
+import InputSection from './components/input-section/InputSection';
+import ResponseSection from './components/response-section/ResponseSection';
+import type { ModelResponse } from './types/responses';
 
 export default function Home() {
   const [responses, setResponses] = useState<ModelResponse[]>([]);
@@ -76,9 +78,72 @@ export default function Home() {
   );
 }
 
-// Temporary mock API call - will be replaced with actual API integration
+const mockResponses = {
+  'llama-3.3-70b-versatile': (prompt: string) => `[Llama 3.3 70B Analysis]
+Input: "${prompt}"
+
+Analysis:
+This is a simulated response from the Llama 3.3 70B model. It would typically provide a detailed, nuanced analysis with:
+- Comprehensive understanding
+- Logical reasoning
+- Multiple perspectives
+- Relevant examples
+
+The actual implementation will connect to the real API endpoint.`,
+
+  'mixtral-8x7b-32768': (prompt: string) => `[Mixtral 8x7B Analysis]
+Prompt: "${prompt}"
+
+Response:
+Here's a simulated Mixtral 8x7B response that would showcase:
+- Fast processing speed
+- Efficient reasoning
+- Concise explanations
+- Direct answers
+
+This placeholder will be replaced with real API responses.`,
+
+  'gemma2-9b-it': (prompt: string) => `[Gemma2 9B Analysis]
+Q: ${prompt}
+
+A: This is a mock Gemma2 9B response demonstrating:
+1. Clear structure
+2. Step-by-step reasoning
+3. Focused answers
+4. Learning-oriented approach
+
+Real API integration pending.`,
+
+  'distil-whisper-large-v3-en': (prompt: string) => `[Distil Whisper Analysis]
+Input Text: "${prompt}"
+
+Processed Output:
+Simulated Whisper model response showing:
+* Speech pattern recognition
+* Transcription capabilities
+* Audio comprehension
+* Language processing
+
+This will be replaced with actual API output.`
+};
+
+// Enhanced mock API call with realistic scenarios
 const mockApiCall = async (prompt: string, model: string): Promise<string> => {
+  // Simulate network delay (1-3 seconds)
   await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-  if (Math.random() < 0.1) throw new Error('Model API error');
-  return `Response from ${model} for prompt: "${prompt}"\n\nThis is a mock response that will be replaced with actual API integration.`;
+
+  // Simulate different error scenarios (10% chance)
+  if (Math.random() < 0.1) {
+    const errors = [
+      'Rate limit exceeded. Please try again later.',
+      'Model is currently overloaded. Please retry.',
+      'Invalid request format.',
+      'Model initialization failed.',
+      'Connection timeout.'
+    ];
+    throw new Error(errors[Math.floor(Math.random() * errors.length)]);
+  }
+
+  // Return model-specific mock response
+  return mockResponses[model as keyof typeof mockResponses](prompt);
 };
